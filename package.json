@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/opencare/waterline-migrations/issues"
   },
-  "homepage": "https://github.com/opencare/waterline-migrations"
+  "homepage": "https://github.com/opencare/waterline-migrations",
+  "dependencies": {
+    "waterline": "git://github.com/balderdashy/waterline.git"
+  }
 }
