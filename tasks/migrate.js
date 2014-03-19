@@ -5,32 +5,40 @@ var SailsIntegration = require('../lib/sailsIntegration'),
   Migrator = require('../lib/migrator');
 
 module.exports = function(grunt) {
-  return grunt.registerTask("migrate", "Migrate Waterline models", function() {
-    var baseAppPath, done, modulesPath;
+  grunt.registerTask("migrate", "Migrate Waterline models", function(action) {
 
-    done = this.async();
-    baseAppPath = grunt.config.get('basePath');
+    var done = this.async();
+    var baseAppPath = process.cwd();
+    var modulesPath = path.join(baseAppPath, 'node_modules');
 
-    modulesPath = path.join(baseAppPath, 'node_modules');
-    return SailsIntegration.loadSailsConfig(modulesPath, function(err, sailsConfig) {
-      if (err) {
-        return done(err);
-      }
-      // config = _.extend(config, {
-      //   migrationOutDir: path.join(baseAppPath, 'db', 'migrations'),
-      //   templatesPath: path.join(__dirname, 'templates')
-      // });
+    console.log(baseAppPath);
 
-      // Check if we're migrating or creating new
+    // Check if we're migrating or creating new
+    if (action == 'create') {
+      grunt.log.writeln('Creating new migration...');
+      done();
+    } else if (action == 'up' || action == 'down') {
+      grunt.log.writeln('Migrating database...');
 
-      var config = {
-        adapter: sailsConfig.defaultAdapter,
-        migrationsDir: 'somedir',
-        command: argv[0]
-      };
-      
-      Migrator.migrate(config, done); // TODO: pass in arg values
-    });
+      SailsIntegration.loadSailsConfig(modulesPath, function(err, sailsConfig) {
+        if (err) return done(err);
+
+        var config = {
+          adapter: sailsConfig.defaultAdapter,
+          migrationsDir: path.join(baseAppPath, 'db', 'migrations')
+        };
+        
+        Migrator.migrate(config, action, function(err) {
+          if (err) return done(false);
+
+          grunt.log.writeln('Migration complete.');
+          done();
+        });
+      });
+    } else {
+      grunt.log.error("Unknown command. Please use one of 'migrate:create', 'migrate:up', or 'migrate:down'.");
+      done(false);
+    }
   });
 };
 

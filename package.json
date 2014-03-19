@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/opencare/waterline-migrations",
   "dependencies": {
-    "waterline": "git://github.com/balderdashy/waterline.git"
+    "waterline": "git://github.com/balderdashy/waterline.git",
+    "lodash": "2.4.1"
   }
 }
