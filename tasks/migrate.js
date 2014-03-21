@@ -44,10 +44,13 @@ module.exports = function(grunt) {
           };
           
           Migrator.migrate(config, action, function(err) {
-            if (err) return done(false);
+            if (err) {
+              grunt.log.error(err);
+              return done(false);
+            }
 
             grunt.log.writeln('Migration complete.');
-            done();
+            return done();
           });
         });
         return;
